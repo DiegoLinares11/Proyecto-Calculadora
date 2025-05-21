@@ -11,11 +11,40 @@ function useCalculator() {
 
   const isOperator = (char) => ['+', '-', '*', '/', '%'].includes(char)
 
+  const toggleSign = () => {
+    if (display === '0') return
+    if (display.startsWith('-')) {
+      setDisplay(display.slice(1))
+    } else {
+      const newDisplay = '-' + display
+      if (newDisplay.replace('.', '').length > MAX_DIGITS) {
+        setDisplay('ERROR')
+        return
+      }
+      setDisplay(newDisplay)
+    }
+  }
+
+  const applyPercentage = () => {
+    const value = parseFloat(display)
+    const result = value / 100
+    if (result > MAX_VALUE) {
+      setDisplay('ERROR')
+      return
+    }
+    const str = result.toString()
+    if (str.replace('.', '').length > MAX_DIGITS) {
+      setDisplay('ERROR')
+      return
+    }
+    setDisplay(result.toString())
+    setWaitingForNewInput(true)
+  }
+
   const handleInput = (label) => {
     if (display === 'ERROR') return
 
-    // Limpiar pantalla si esperamos un nuevo número
-    if (waitingForNewInput && !isOperator(label) && label !== '=') {
+    if (waitingForNewInput && !isOperator(label) && label !== '=' && label !== '+/-' && label !== '%') {
       setDisplay(label === '.' ? '0.' : label)
       setWaitingForNewInput(false)
       return
@@ -27,6 +56,10 @@ function useCalculator() {
     } else if (label === '.') {
       if (display.includes('.') || display.length >= MAX_DIGITS) return
       setDisplay(prev => prev + '.')
+    } else if (label === '+/-') {
+      toggleSign()
+    } else if (label === '%') {
+      applyPercentage()
     } else if (isOperator(label)) {
       calculateIntermediate(label)
     } else if (label === '=') {
@@ -82,7 +115,7 @@ function useCalculator() {
     const str = result.toString()
     if (str.replace('.', '').length > MAX_DIGITS) return 'ERROR'
 
-    return parseFloat(result.toFixed(6)) // para evitar muchos decimales
+    return parseFloat(result.toFixed(6))
   }
 
   const clear = () => {

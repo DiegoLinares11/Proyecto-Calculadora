@@ -65,33 +65,32 @@ export const useCalculator = () => {
     }
   }
 
-
   const formatResult = (result) => {
     if (result < 0) return 'ERROR'
     if (result > MAX_VALUE) return 'ERROR'
 
     const resultString = result.toString()
-    
+
     if (resultString.length > MAX_DISPLAY_LENGTH) {
       // Si es un decimal, tratar de ajustar decimales
       if (resultString.includes('.')) {
         const integerPart = Math.floor(result)
         const integerString = integerPart.toString()
-        
+
         if (integerString.length >= MAX_DISPLAY_LENGTH) {
           return 'ERROR'
         }
-        
+
         const availableDecimals = MAX_DISPLAY_LENGTH - integerString.length - 1 // -1 para el punto
         if (availableDecimals <= 0) {
           return integerString
         }
-        
+
         return result.toFixed(availableDecimals)
       }
       return 'ERROR'
     }
-    
+
     return resultString
   }
 
@@ -109,14 +108,14 @@ export const useCalculator = () => {
   const performOperation = (nextOperation) => {
     if (display === 'ERROR') return
     const currentValue = parseFloat(display)
-    
+
     if (previousValue === null) {
       setPreviousValue(currentValue)
       setWaitingForOperand(true)
       setOperation(nextOperation)
       return
     }
-    
+
     let result
     switch (operation) {
       case '+':
@@ -144,7 +143,7 @@ export const useCalculator = () => {
       default:
         result = currentValue
     }
-    
+
     const formattedResult = formatResult(result)
     setDisplay(formattedResult)
     setPreviousValue(parseFloat(formattedResult === 'ERROR' ? 0 : formattedResult))

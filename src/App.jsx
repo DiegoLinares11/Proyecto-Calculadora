@@ -1,9 +1,9 @@
 import Calculator from './components/Calculator'
 import './App.css'
 
-function App() {
+function App () {
   return (
-    <div className="app">
+    <div className='app'>
       <h1>Calculadora</h1>
       <Calculator />
     </div>

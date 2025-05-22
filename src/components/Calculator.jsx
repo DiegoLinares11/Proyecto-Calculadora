@@ -18,7 +18,7 @@ const Calculator = () => {
   }
 
   return (
-    <div className="calculator">
+    <div className='calculator'>
       <Display value={display} />
       <KeyPad
         onDigitClick={inputDigit}

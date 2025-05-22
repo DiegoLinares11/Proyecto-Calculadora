@@ -1,14 +1,32 @@
 import Display from './Display'
-import Keypad from './Keypad'
-import useCalculator from '../hooks/useCalculator'
+import KeyPad from './KeyPad'
+import { useCalculator } from '../hooks/useCalculator'
 
-function Calculator() {
-  const { display, handleInput } = useCalculator()
+const Calculator = () => {
+  const {
+    display,
+    clearDisplay,
+    inputDigit,
+    inputDecimal,
+    toggleSign,
+    performOperation
+  } = useCalculator()
+
+  const handleEqualClick = () => {
+    performOperation('=')
+  }
 
   return (
     <div className="calculator">
       <Display value={display} />
-      <Keypad onButtonClick={handleInput} />
+      <KeyPad
+        onDigitClick={inputDigit}
+        onOperatorClick={performOperation}
+        onDecimalClick={inputDecimal}
+        onClearClick={clearDisplay}
+        onEqualClick={handleEqualClick}
+        onToggleSignClick={toggleSign}
+      />
     </div>
   )
 }

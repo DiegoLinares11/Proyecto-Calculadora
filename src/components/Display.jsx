@@ -1,6 +1,6 @@
-function Display({ value }) {
+const Display = ({ value }) => {
   return (
-    <div className="display">
+    <div className="calculator-display" data-testid="display">
       {value}
     </div>
   )

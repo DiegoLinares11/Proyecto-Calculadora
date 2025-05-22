@@ -1,27 +1,71 @@
 import Button from './Button'
 
-const keys = [
-  'C', '+/-', '%', '/',
-  '7', '8', '9', '*',
-  '4', '5', '6', '-',
-  '1', '2', '3', '+',
-  '0', '.', '='
-]
-
-function Keypad({ onButtonClick }) {
+const KeyPad = ({
+  onDigitClick,
+  onOperatorClick,
+  onDecimalClick,
+  onClearClick,
+  onEqualClick,
+  onToggleSignClick
+}) => {
   return (
-    <div className="keypad">
-      {[0, 1, 2, 3, 4].map(row => (
-        <div className="keypad-row" key={row}>
-          {keys.slice(row * 4, row * 4 + 4).map(btn => (
-            <Button key={btn} label={btn} onClick={onButtonClick} />
-          ))}
-        </div>
-      ))}
+    <div className="calculator-keypad">
+      <div className="keypad-row">
+        <Button onClick={onClearClick} className="function-key">
+          C
+        </Button>
+        <Button onClick={onToggleSignClick} className="function-key">
+          +/-
+        </Button>
+        <Button onClick={() => onOperatorClick('%')} className="operator-key">
+          %
+        </Button>
+        <Button onClick={() => onOperatorClick('/')} className="operator-key">
+          ÷
+        </Button>
+      </div>
+
+      <div className="keypad-row">
+        <Button onClick={() => onDigitClick('7')}>7</Button>
+        <Button onClick={() => onDigitClick('8')}>8</Button>
+        <Button onClick={() => onDigitClick('9')}>9</Button>
+        <Button onClick={() => onOperatorClick('*')} className="operator-key">
+          ×
+        </Button>
+      </div>
+
+      <div className="keypad-row">
+        <Button onClick={() => onDigitClick('4')}>4</Button>
+        <Button onClick={() => onDigitClick('5')}>5</Button>
+        <Button onClick={() => onDigitClick('6')}>6</Button>
+        <Button onClick={() => onOperatorClick('-')} className="operator-key">
+          -
+        </Button>
+      </div>
+
+      <div className="keypad-row">
+        <Button onClick={() => onDigitClick('1')}>1</Button>
+        <Button onClick={() => onDigitClick('2')}>2</Button>
+        <Button onClick={() => onDigitClick('3')}>3</Button>
+        <Button onClick={() => onOperatorClick('+')} className="operator-key">
+          +
+        </Button>
+      </div>
+
+      <div className="keypad-row">
+        <Button
+          onClick={() => onDigitClick('0')}
+          className="double-width"
+        >
+          0
+        </Button>
+        <Button onClick={onDecimalClick}>.</Button>
+        <Button onClick={onEqualClick} className="operator-key">
+          =
+        </Button>
+      </div>
     </div>
   )
 }
 
-
-
-export default Keypad
+export default KeyPad

@@ -1,18 +1,12 @@
-function Button({ label, onClick }) {
-  const isOperator = ['+', '-', '*', '/', '='].includes(label)
-  const isFunction = ['C', '+/-', '%'].includes(label)
-
-  let className = 'calculator-button'
-  if (isOperator) className += ' operator-key'
-  if (isFunction) className += ' function-key'
-  if (label === '0') className += ' double-width'
-
+const Button = ({ onClick, className, children }) => {
   return (
-    <button className={className} onClick={() => onClick(label)}>
-      {label}
+    <button
+      onClick={onClick}
+      className={`calculator-button ${className || ''}`}
+    >
+      {children}
     </button>
   )
 }
-
 
 export default Button

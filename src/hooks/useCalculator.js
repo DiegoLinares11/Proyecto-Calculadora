@@ -1,131 +1,139 @@
 import { useState } from 'react'
 
-function useCalculator() {
+const MAX_DISPLAY_LENGTH = 9
+const MAX_VALUE = 999999999
+
+export const useCalculator = () => {
   const [display, setDisplay] = useState('0')
-  const [accumulator, setAccumulator] = useState(null)
-  const [operator, setOperator] = useState(null)
-  const [waitingForNewInput, setWaitingForNewInput] = useState(false)
+  const [previousValue, setPreviousValue] = useState(null)
+  const [operation, setOperation] = useState(null)
+  const [waitingForOperand, setWaitingForOperand] = useState(false)
 
-  const MAX_DIGITS = 9
-  const MAX_VALUE = 999999999
+  const clearDisplay = () => {
+    setDisplay('0')
+    setPreviousValue(null)
+    setOperation(null)
+    setWaitingForOperand(false)
+  }
 
-  const isOperator = (char) => ['+', '-', '*', '/', '%'].includes(char)
+  const inputDigit = (digit) => {
+    if (waitingForOperand) {
+      setDisplay(digit)
+      setWaitingForOperand(false)
+    } else {
+      setDisplay(display === '0' ? digit : display.length < MAX_DISPLAY_LENGTH ? display + digit : display)
+    }
+  }
+
+  const inputDecimal = () => {
+    if (waitingForOperand) {
+      setDisplay('0.')
+      setWaitingForOperand(false)
+      return
+    }
+
+    if (display.length >= MAX_DISPLAY_LENGTH) return
+    if (!display.includes('.')) {
+      setDisplay(display + '.')
+    }
+  }
 
   const toggleSign = () => {
-    if (display === '0') return
-    if (display.startsWith('-')) {
-      setDisplay(display.slice(1))
+    const newValue = parseFloat(display) * -1
+    
+    if (newValue < 0) {
+      setDisplay('ERROR')
+      return
+    }
+    
+    const newDisplay = newValue.toString()
+    if (newDisplay.length > MAX_DISPLAY_LENGTH) {
+      setDisplay(display)
     } else {
-      const newDisplay = '-' + display
-      if (newDisplay.replace('.', '').length > MAX_DIGITS) {
-        setDisplay('ERROR')
-        return
+      setDisplay(newDisplay === '0' ? '0' : newDisplay)
+    }
+  }
+
+  const formatResult = (result) => {
+    if (result < 0) return 'ERROR'
+    if (result > MAX_VALUE) return 'ERROR'
+
+    const resultString = result.toString()
+    
+    if (resultString.length > MAX_DISPLAY_LENGTH) {
+      // Si es un decimal, tratar de ajustar decimales
+      if (resultString.includes('.')) {
+        const integerPart = Math.floor(result)
+        const integerString = integerPart.toString()
+        
+        if (integerString.length >= MAX_DISPLAY_LENGTH) {
+          return 'ERROR'
+        }
+        
+        const availableDecimals = MAX_DISPLAY_LENGTH - integerString.length - 1 // -1 para el punto
+        if (availableDecimals <= 0) {
+          return integerString
+        }
+        
+        return result.toFixed(availableDecimals)
       }
-      setDisplay(newDisplay)
+      return 'ERROR'
     }
+    
+    return resultString
   }
 
-  const applyPercentage = () => {
-    const value = parseFloat(display)
-    const result = value / 100
-    if (result > MAX_VALUE) {
-      setDisplay('ERROR')
+  const performOperation = (nextOperation) => {
+    const currentValue = parseFloat(display)
+    
+    if (previousValue === null) {
+      setPreviousValue(currentValue)
+      setWaitingForOperand(true)
+      setOperation(nextOperation)
       return
     }
-    const str = result.toString()
-    if (str.replace('.', '').length > MAX_DIGITS) {
-      setDisplay('ERROR')
-      return
-    }
-    setDisplay(result.toString())
-    setWaitingForNewInput(true)
-  }
-
-  const handleInput = (label) => {
-    if (display === 'ERROR') return
-
-    if (waitingForNewInput && !isOperator(label) && label !== '=' && label !== '+/-' && label !== '%') {
-      setDisplay(label === '.' ? '0.' : label)
-      setWaitingForNewInput(false)
-      return
-    }
-
-    if (!isNaN(label)) {
-      if (display.length >= MAX_DIGITS) return
-      setDisplay(prev => (prev === '0' ? label : prev + label))
-    } else if (label === '.') {
-      if (display.includes('.') || display.length >= MAX_DIGITS) return
-      setDisplay(prev => prev + '.')
-    } else if (label === '+/-') {
-      toggleSign()
-    } else if (label === '%') {
-      applyPercentage()
-    } else if (isOperator(label)) {
-      calculateIntermediate(label)
-    } else if (label === '=') {
-      calculateResult()
-    } else if (label === 'C') {
-      clear()
-    }
-  }
-
-  const calculateIntermediate = (newOperator) => {
-    const current = parseFloat(display)
-
-    if (accumulator === null) {
-      setAccumulator(current)
-    } else if (operator) {
-      const result = operate(accumulator, current, operator)
-      if (result === 'ERROR') return setDisplay('ERROR')
-      setAccumulator(result)
-      setDisplay(result.toString())
-    }
-
-    setOperator(newOperator)
-    setWaitingForNewInput(true)
-  }
-
-  const calculateResult = () => {
-    if (operator === null || accumulator === null) return
-
-    const current = parseFloat(display)
-    const result = operate(accumulator, current, operator)
-
-    if (result === 'ERROR') return setDisplay('ERROR')
-
-    setDisplay(result.toString())
-    setAccumulator(null)
-    setOperator(null)
-    setWaitingForNewInput(true)
-  }
-
-  const operate = (a, b, op) => {
+    
     let result
-    switch (op) {
-      case '+': result = a + b; break
-      case '-': result = a - b; break
-      case '*': result = a * b; break
-      case '/': result = b === 0 ? 'ERROR' : a / b; break
-      case '%': result = a % b; break
-      default: return a
+    switch (operation) {
+      case '+':
+        result = previousValue + currentValue
+        break
+      case '-':
+        result = previousValue - currentValue
+        break
+      case '*':
+        result = previousValue * currentValue
+        break
+      case '/':
+        if (currentValue === 0) {
+          setDisplay('ERROR')
+          setPreviousValue(null)
+          setOperation(null)
+          setWaitingForOperand(true)
+          return
+        }
+        result = previousValue / currentValue
+        break
+      case '%':
+        result = previousValue % currentValue
+        break
+      default:
+        result = currentValue
     }
-
-    if (result < 0 || result > MAX_VALUE) return 'ERROR'
-
-    const str = result.toString()
-    if (str.replace('.', '').length > MAX_DIGITS) return 'ERROR'
-
-    return parseFloat(result.toFixed(6))
+    
+    const formattedResult = formatResult(result)
+    setDisplay(formattedResult)
+    setPreviousValue(parseFloat(formattedResult === 'ERROR' ? 0 : formattedResult))
+    setWaitingForOperand(true)
+    setOperation(nextOperation)
   }
 
-  const clear = () => {
-    setDisplay('0')
-    setAccumulator(null)
-    setOperator(null)
-    setWaitingForNewInput(false)
+  return {
+    display,
+    clearDisplay,
+    inputDigit,
+    inputDecimal,
+    toggleSign,
+    performOperation
   }
-
-  return { display, handleInput }
 }
-
-export default useCalculator

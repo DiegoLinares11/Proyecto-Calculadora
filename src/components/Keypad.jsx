@@ -6,7 +6,8 @@ const KeyPad = ({
   onDecimalClick,
   onClearClick,
   onEqualClick,
-  onToggleSignClick
+  onToggleSignClick,
+  onPercentageClick   
 }) => {
   return (
     <div className="calculator-keypad">
@@ -17,9 +18,7 @@ const KeyPad = ({
         <Button onClick={onToggleSignClick} className="operator-key">
           +/-
         </Button>
-        <Button onClick={() => onOperatorClick('%')} className="operator-key">
-          %
-        </Button>
+        <Button onClick={onPercentageClick} className="operator-key">%</Button>
         <Button onClick={() => onOperatorClick('/')} className="operator-key">
           ÷
         </Button>

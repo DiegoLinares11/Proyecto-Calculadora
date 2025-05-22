@@ -95,6 +95,17 @@ export const useCalculator = () => {
     return resultString
   }
 
+  const applyPercentage = () => {
+    if (display === 'ERROR') return
+
+    const currentValue = parseFloat(display)
+    const result = currentValue / 100
+    const formatted = formatResult(result)
+
+    setDisplay(formatted)
+    setWaitingForOperand(true)
+  }
+
   const performOperation = (nextOperation) => {
     if (display === 'ERROR') return
     const currentValue = parseFloat(display)
@@ -147,6 +158,7 @@ export const useCalculator = () => {
     inputDigit,
     inputDecimal,
     toggleSign,
-    performOperation
+    performOperation,
+    applyPercentage
   }
 }

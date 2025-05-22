@@ -1,5 +1,5 @@
 import Display from './Display'
-import KeyPad from './KeyPad'
+import KeyPad from './Keypad'
 import { useCalculator } from '../hooks/useCalculator'
 
 const Calculator = () => {
@@ -9,7 +9,8 @@ const Calculator = () => {
     inputDigit,
     inputDecimal,
     toggleSign,
-    performOperation
+    performOperation,
+    applyPercentage
   } = useCalculator()
 
   const handleEqualClick = () => {
@@ -26,6 +27,7 @@ const Calculator = () => {
         onClearClick={clearDisplay}
         onEqualClick={handleEqualClick}
         onToggleSignClick={toggleSign}
+        onPercentageClick={applyPercentage}
       />
     </div>
   )

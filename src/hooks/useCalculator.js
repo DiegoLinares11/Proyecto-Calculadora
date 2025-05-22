@@ -17,6 +17,12 @@ export const useCalculator = () => {
   }
 
   const inputDigit = (digit) => {
+    if (display === 'ERROR') {
+      setDisplay(digit)
+      setWaitingForOperand(false)
+      return
+    }
+
     if (waitingForOperand) {
       setDisplay(digit)
       setWaitingForOperand(false)
@@ -26,6 +32,12 @@ export const useCalculator = () => {
   }
 
   const inputDecimal = () => {
+    if (display === 'ERROR') {
+      setDisplay('0.')
+      setWaitingForOperand(false)
+      return
+    }
+
     if (waitingForOperand) {
       setDisplay('0.')
       setWaitingForOperand(false)
@@ -39,20 +51,20 @@ export const useCalculator = () => {
   }
 
   const toggleSign = () => {
+    if (display === 'ERROR') return
+
+    if (display === '0') return // no tiene sentido cambiar el signo de cero
+
     const newValue = parseFloat(display) * -1
-    
-    if (newValue < 0) {
-      setDisplay('ERROR')
-      return
-    }
-    
     const newDisplay = newValue.toString()
+
     if (newDisplay.length > MAX_DISPLAY_LENGTH) {
-      setDisplay(display)
+      setDisplay('ERROR')
     } else {
-      setDisplay(newDisplay === '0' ? '0' : newDisplay)
+      setDisplay(newDisplay)
     }
   }
+
 
   const formatResult = (result) => {
     if (result < 0) return 'ERROR'
@@ -84,6 +96,7 @@ export const useCalculator = () => {
   }
 
   const performOperation = (nextOperation) => {
+    if (display === 'ERROR') return
     const currentValue = parseFloat(display)
     
     if (previousValue === null) {

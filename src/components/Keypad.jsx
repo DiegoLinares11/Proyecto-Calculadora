@@ -14,7 +14,7 @@ const KeyPad = ({
         <Button onClick={onClearClick} className="function-key">
           C
         </Button>
-        <Button onClick={onToggleSignClick} className="function-key">
+        <Button onClick={onToggleSignClick} className="operator-key">
           +/-
         </Button>
         <Button onClick={() => onOperatorClick('%')} className="operator-key">

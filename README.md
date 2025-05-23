@@ -24,7 +24,7 @@ El estilo de la calculadora fue basado en el estilo de la calculadora de mi tele
 -  historias de Storybook
 - Custom Hook: `useCalculator` para lógica central
 
-## Tecnologías Utilizadas 🛠
+## Tecnologías Utilizadas
 - **React 18** + Vite
 - **Vitest** + Testing Library
 - **Storybook 7**

@@ -17,19 +17,19 @@ export const useCalculator = () => {
   }
 
   const inputDigit = (digit) => {
-    if (display === 'ERROR') {
-      setDisplay(digit)
-      setWaitingForOperand(false)
-      return
-    }
+    setDisplay((prevDisplay) => {
+      if (prevDisplay === 'ERROR') {
+        return digit;
+      }
 
-    if (waitingForOperand) {
-      setDisplay(digit)
-      setWaitingForOperand(false)
-    } else {
-      setDisplay(display === '0' ? digit : display.length < MAX_DISPLAY_LENGTH ? display + digit : display)
-    }
-  }
+      if (waitingForOperand) {
+        return digit;
+      } else {
+        return prevDisplay === '0' ? digit : prevDisplay.length < MAX_DISPLAY_LENGTH ? prevDisplay + digit : prevDisplay;
+      }
+    });
+    setWaitingForOperand(false);
+  };
 
   const inputDecimal = () => {
     if (display === 'ERROR') {
@@ -66,33 +66,24 @@ export const useCalculator = () => {
   }
 
   const formatResult = (result) => {
-    if (result < 0) return 'ERROR'
-    if (result > MAX_VALUE) return 'ERROR'
-
-    const resultString = result.toString()
-
-    if (resultString.length > MAX_DISPLAY_LENGTH) {
-      // Si es un decimal, tratar de ajustar decimales
-      if (resultString.includes('.')) {
-        const integerPart = Math.floor(result)
-        const integerString = integerPart.toString()
-
-        if (integerString.length >= MAX_DISPLAY_LENGTH) {
-          return 'ERROR'
-        }
-
-        const availableDecimals = MAX_DISPLAY_LENGTH - integerString.length - 1 // -1 para el punto
-        if (availableDecimals <= 0) {
-          return integerString
-        }
-
-        return result.toFixed(availableDecimals)
-      }
-      return 'ERROR'
+    if (isNaN(result) || result < 0 || result > MAX_VALUE) {
+      return 'ERROR';
     }
-
-    return resultString
-  }
+    
+    // Lógica para manejar decimales y longitud
+    let resultString = result.toString();
+    if (resultString.length > MAX_DISPLAY_LENGTH) {
+      if (resultString.includes('.')) {
+        const [integer, decimal] = resultString.split('.');
+        const availableSpace = MAX_DISPLAY_LENGTH - integer.length - 1;
+        return availableSpace > 0 
+          ? `${integer}.${decimal.slice(0, availableSpace)}`
+          : 'ERROR';
+      }
+      return 'ERROR';
+    }
+    return resultString;
+  };
 
   const applyPercentage = () => {
     if (display === 'ERROR') return
@@ -106,50 +97,50 @@ export const useCalculator = () => {
   }
 
   const performOperation = (nextOperation) => {
-    if (display === 'ERROR') return
-    const currentValue = parseFloat(display)
+    if (display === 'ERROR') return;
+    const currentValue = parseFloat(display);
 
-    if (previousValue === null) {
-      setPreviousValue(currentValue)
-      setWaitingForOperand(true)
-      setOperation(nextOperation)
-      return
-    }
-
-    let result
-    switch (operation) {
-      case '+':
-        result = previousValue + currentValue
-        break
-      case '-':
-        result = previousValue - currentValue
-        break
-      case '*':
-        result = previousValue * currentValue
-        break
-      case '/':
-        if (currentValue === 0) {
-          setDisplay('ERROR')
-          setPreviousValue(null)
-          setOperation(null)
-          setWaitingForOperand(true)
-          return
+    setPreviousValue((prevPrevious) => {
+      if (prevPrevious === null) {
+        // Primer operando: guardar valor y operación
+        setOperation(nextOperation !== '=' ? nextOperation : null);
+        setWaitingForOperand(true);
+        return currentValue;
+      } else {
+        // Realizar cálculo con el valor anterior
+        let result;
+        switch (operation) {
+          case '+':
+            result = prevPrevious + currentValue;
+            break;
+          case '-':
+            result = prevPrevious - currentValue;
+            break;
+          case '*':
+            result = prevPrevious * currentValue;
+            break;
+          case '/':
+            result = currentValue === 0 ? NaN : prevPrevious / currentValue;
+            break;
+          default:
+            result = currentValue;
         }
-        result = previousValue / currentValue
-        break
-      case '%':
-        result = previousValue % currentValue
-        break
-      default:
-        result = currentValue
-    }
 
-    const formattedResult = formatResult(result)
-    setDisplay(formattedResult)
-    setPreviousValue(parseFloat(formattedResult === 'ERROR' ? 0 : formattedResult))
-    setWaitingForOperand(true)
-    setOperation(nextOperation)
-  }
+        const formattedResult = formatResult(result);
+        setDisplay(formattedResult);
+
+        if (nextOperation === '=') {
+          setOperation(null);
+          return null;
+        } else {
+          setOperation(nextOperation);
+          return formattedResult === 'ERROR' ? 0 : parseFloat(formattedResult);
+        }
+      }
+    });
+
+    setWaitingForOperand(true);
+  };
 
   return {
     display,

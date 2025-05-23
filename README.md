@@ -1,10 +1,12 @@
-# Calculadora React Avanzada 🧮
-
-[![JavaScript Standard Style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://standardjs.com)
-[![Test Coverage](https://img.shields.io/badge/coverage-100%25-success)](https://vitest.dev)
+# Calculadora React Avanzada 
 
 Calculadora interactiva con pruebas unitarias, historias de Storybook y cumplimiento de estándares de código.
 
+El estilo de la calculadora fue basado en el estilo de la calculadora de mi telefono Samsung. La cual se ve asi:
+#### Calculadora de mi celular
+![Calculadora de mi celular](image-1.png)
+
+#### Calculadora hecha por mi.
 ![Calculadora](image.png)
 
 
@@ -58,5 +60,43 @@ src/
 │   └── useCalculator.js # Lógica de negocio
 ├── tests/           # Pruebas unitarias
 ├── stories/         # Historias de Storybook
-public/              # Assets estáticos
+```
+### Testing 
+
+Suite de pruebas que cubre:
+
+    Renderizado básico de componentes
+
+    Interacciones de usuario simuladas
+
+    Lógica matemática compleja
+
+    Casos límite y manejo de errores
+
+```bash
+# Ejecutar todos los tests
+npm test
+```
+### Storybook
+Historias interactivas para desarrollo de componentes:
+```bash
+npm run storybook
+```
+
+### Linting
+Configuración estricta siguiendo JavaScript Standard Style en el archivo `.eslintrc.json`:
+```bash
+{
+  "rules": {
+    "semi": ["error", "never"]
+  }
+}
+```
+
+```bash
+# Verificar estilo de código
+npm run lint
+
+# Corregir errores automáticamente
+npm run lint:fix
 ```

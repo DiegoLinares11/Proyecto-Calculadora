@@ -19,17 +19,17 @@ export const useCalculator = () => {
   const inputDigit = (digit) => {
     setDisplay((prevDisplay) => {
       if (prevDisplay === 'ERROR') {
-        return digit;
+        return digit
       }
 
       if (waitingForOperand) {
-        return digit;
+        return digit
       } else {
-        return prevDisplay === '0' ? digit : prevDisplay.length < MAX_DISPLAY_LENGTH ? prevDisplay + digit : prevDisplay;
+        return prevDisplay === '0' ? digit : prevDisplay.length < MAX_DISPLAY_LENGTH ? prevDisplay + digit : prevDisplay
       }
-    });
-    setWaitingForOperand(false);
-  };
+    })
+    setWaitingForOperand(false)
+  }
 
   const inputDecimal = () => {
     if (display === 'ERROR') {
@@ -67,23 +67,23 @@ export const useCalculator = () => {
 
   const formatResult = (result) => {
     if (isNaN(result) || result < 0 || result > MAX_VALUE) {
-      return 'ERROR';
+      return 'ERROR'
     }
-    
+
     // Lógica para manejar decimales y longitud
-    let resultString = result.toString();
+    const resultString = result.toString()
     if (resultString.length > MAX_DISPLAY_LENGTH) {
       if (resultString.includes('.')) {
-        const [integer, decimal] = resultString.split('.');
-        const availableSpace = MAX_DISPLAY_LENGTH - integer.length - 1;
-        return availableSpace > 0 
+        const [integer, decimal] = resultString.split('.')
+        const availableSpace = MAX_DISPLAY_LENGTH - integer.length - 1
+        return availableSpace > 0
           ? `${integer}.${decimal.slice(0, availableSpace)}`
-          : 'ERROR';
+          : 'ERROR'
       }
-      return 'ERROR';
+      return 'ERROR'
     }
-    return resultString;
-  };
+    return resultString
+  }
 
   const applyPercentage = () => {
     if (display === 'ERROR') return
@@ -97,50 +97,50 @@ export const useCalculator = () => {
   }
 
   const performOperation = (nextOperation) => {
-    if (display === 'ERROR') return;
-    const currentValue = parseFloat(display);
+    if (display === 'ERROR') return
+    const currentValue = parseFloat(display)
 
     setPreviousValue((prevPrevious) => {
       if (prevPrevious === null) {
         // Primer operando: guardar valor y operación
-        setOperation(nextOperation !== '=' ? nextOperation : null);
-        setWaitingForOperand(true);
-        return currentValue;
+        setOperation(nextOperation !== '=' ? nextOperation : null)
+        setWaitingForOperand(true)
+        return currentValue
       } else {
         // Realizar cálculo con el valor anterior
-        let result;
+        let result
         switch (operation) {
           case '+':
-            result = prevPrevious + currentValue;
-            break;
+            result = prevPrevious + currentValue
+            break
           case '-':
-            result = prevPrevious - currentValue;
-            break;
+            result = prevPrevious - currentValue
+            break
           case '*':
-            result = prevPrevious * currentValue;
-            break;
+            result = prevPrevious * currentValue
+            break
           case '/':
-            result = currentValue === 0 ? NaN : prevPrevious / currentValue;
-            break;
+            result = currentValue === 0 ? NaN : prevPrevious / currentValue
+            break
           default:
-            result = currentValue;
+            result = currentValue
         }
 
-        const formattedResult = formatResult(result);
-        setDisplay(formattedResult);
+        const formattedResult = formatResult(result)
+        setDisplay(formattedResult)
 
         if (nextOperation === '=') {
-          setOperation(null);
-          return null;
+          setOperation(null)
+          return null
         } else {
-          setOperation(nextOperation);
-          return formattedResult === 'ERROR' ? 0 : parseFloat(formattedResult);
+          setOperation(nextOperation)
+          return formattedResult === 'ERROR' ? 0 : parseFloat(formattedResult)
         }
       }
-    });
+    })
 
-    setWaitingForOperand(true);
-  };
+    setWaitingForOperand(true)
+  }
 
   return {
     display,

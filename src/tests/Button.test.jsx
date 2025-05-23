@@ -9,7 +9,7 @@ describe('Button', () => {
   })
 
   it('should apply additional class names', () => {
-    render(<Button className="test-class">7</Button>)
+    render(<Button className='test-class'>7</Button>)
     expect(screen.getByRole('button').classList.contains('test-class')).toBe(true)
   })
 
@@ -21,7 +21,7 @@ describe('Button', () => {
   })
 
   it('should render as operator button with correct class', () => {
-    render(<Button className="operator-key">+</Button>)
+    render(<Button className='operator-key'>+</Button>)
     const button = screen.getByRole('button')
     expect(button.textContent).toBe('+')
     expect(button.classList.contains('operator-key')).toBe(true)

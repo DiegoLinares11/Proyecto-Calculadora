@@ -72,5 +72,4 @@ describe('Calculator', () => {
     fireEvent.click(screen.getByText('='))
     expect(screen.getByTestId('display').textContent).toBe('ERROR')
   })
-  
 })

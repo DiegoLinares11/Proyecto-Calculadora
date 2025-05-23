@@ -1,12 +1,62 @@
-# React + Vite
+# Calculadora React Avanzada 🧮
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![JavaScript Standard Style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://standardjs.com)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-success)](https://vitest.dev)
 
-Currently, two official plugins are available:
+Calculadora interactiva con pruebas unitarias, historias de Storybook y cumplimiento de estándares de código.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Calculadora](image.png)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Características Clave 
+- Operaciones básicas: `+`, `-`, `×`, `÷`, `%`
+- Manejo de errores para:
+  - Números negativos (muestra `ERROR`)
+  - Límite de 9 dígitos
+  - Overflow (>999,999,999)
+- Componentes modulares:
+  - `<Display>`: Pantalla con formato dinámico
+  - `<Keypad>`: Teclado numérico interactivo
+  - `<Button>`: Botones reutilizables
+- pruebas unitarias
+-  historias de Storybook
+- Custom Hook: `useCalculator` para lógica central
+
+## Tecnologías Utilizadas 🛠
+- **React 18** + Vite
+- **Vitest** + Testing Library
+- **Storybook 7**
+- JavaScript Standard Style (sin puntos y coma)
+
+## Instalación y Uso 
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/DiegoLinares11/Proyecto-Calculadora
+cd calculadora-react
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Modos de ejecución:
+npm run dev          # Inicia servidor de desarrollo
+npm run build        # Crea versión de producción
+npm test             # Ejecuta pruebas unitarias
+npm run lint         # Verifica estándares de código
+npm run storybook    # Abre Storybook (http://localhost:6006)
+
+```
+Estructura del Proyecto 
+```bash
+src/
+├── components/      # Componentes UI
+│   ├── Button.jsx   # Botón reutilizable
+│   ├── Display.jsx  # Pantalla de calculadora
+│   ├── Keypad.jsx   # Teclado numérico
+│   └── Calculator.jsx # Componente principal
+├── hooks/
+│   └── useCalculator.js # Lógica de negocio
+├── tests/           # Pruebas unitarias
+├── stories/         # Historias de Storybook
+public/              # Assets estáticos
+```
